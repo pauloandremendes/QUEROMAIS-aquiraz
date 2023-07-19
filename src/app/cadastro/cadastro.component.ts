@@ -65,6 +65,7 @@ export class CadastroComponent implements OnInit {
           console.log(res);
           if (res) {
             this.clearLocalStorage();
+            this.clearFormFields();
           }
         },
         error: (error) => {
@@ -88,9 +89,7 @@ export class CadastroComponent implements OnInit {
       // Armazenar os dados atualizados no Local Storage
       localStorage.setItem(this.localStorageKey, JSON.stringify(savedData));
 
-      // Limpar os campos do formulário
-      this.googleSheetForm.reset();
-
+      this.clearFormFields(); 
     }
   }
 
@@ -127,6 +126,10 @@ export class CadastroComponent implements OnInit {
 
   private clearLocalStorage() {
     localStorage.removeItem(this.localStorageKey);
+  }
+
+  private clearFormFields() {
+    this.googleSheetForm.reset();
   }
 
   locais: string[] = [
