@@ -11,6 +11,7 @@ import { SheetService } from 'src/app/cadastro/sheet.service';
 })
 export class CadastroComponent implements OnInit {
   googleSheetForm!: FormGroup;
+  private localStorageKey = 'form_data';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -18,36 +19,114 @@ export class CadastroComponent implements OnInit {
     private router: Router
   ) {
     this.googleSheetForm = this.formBuilder.group({
-      name: formBuilder.control(''),
-      sobrenome: formBuilder.control(''),
-      datanasci: formBuilder.control(''),
-      telefone: formBuilder.control(''),
-      local: formBuilder.control(''),
+      name: formBuilder.control(localStorage.getItem(this.localStorageKey + '_name') || ''),
+      sobrenome: formBuilder.control(localStorage.getItem(this.localStorageKey + '_sobrenome') || ''),
+      datanasci: formBuilder.control(localStorage.getItem(this.localStorageKey + '_datanasci') || ''),
+      telefone: formBuilder.control(localStorage.getItem(this.localStorageKey + '_telefone') || ''),
+      local: formBuilder.control(localStorage.getItem(this.localStorageKey + '_local') || ''),
     });
+
+    window.addEventListener('online', () => {
+      this.sendDataToSheet();
+    });
+
+    setInterval(() => {
+      if (navigator.onLine) {
+        this.sendDataToSheet();
+      }
+    }, 10000);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // Verificar se já existem registros no Local Storage
+    let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
+
+    // Preencher os campos do formulário com o último registro armazenado
+    if (savedData.length > 0) {
+      const lastFormData = savedData[savedData.length - 1];
+      this.googleSheetForm.setValue(lastFormData);
+    }
+
+    if (navigator.onLine) {
+      this.sendDataToSheet();
+    }
+  }
 
   public onSubmit() {
-    console.log(this.googleSheetForm.value);
-
     const name = this.googleSheetForm.value.name;
     const sobrenome = this.googleSheetForm.value.sobrenome;
     const datanasci = this.googleSheetForm.value.datanasci;
     const telefone = this.googleSheetForm.value.telefone;
     const local = this.googleSheetForm.value.local;
 
-    this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
-      next: (res) => {
-        console.log(res);
-        if (res) {
-          // this.router.navigate(['/cadastro']);
-        }
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
+    if(navigator.onLine){
+      this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
+        next: (res) => {
+          console.log(res);
+          if (res) {
+            this.clearLocalStorage();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    } else {
+      const formData = {
+        name,
+        sobrenome,
+        datanasci,
+        telefone,
+        local,
+      };
+      // Verificar se já existem registros no Local Storage
+      let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
+
+      // Adicionar o novo registro ao array de objetos
+      savedData.push(formData);
+
+      // Armazenar os dados atualizados no Local Storage
+      localStorage.setItem(this.localStorageKey, JSON.stringify(savedData));
+
+      // Limpar os campos do formulário
+      this.googleSheetForm.reset();
+
+    }
+  }
+
+  private sendDataToSheet() {
+    // Verificar se existem dados armazenados no localStorage
+    const savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
+
+    if (savedData.length > 0) {
+      const formData = savedData[0];
+      const name = formData.name;
+      const sobrenome = formData.sobrenome;
+      const datanasci = formData.datanasci;
+      const telefone = formData.telefone;
+      const local = formData.local;
+
+      // Enviar os dados para a planilha
+      this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
+        next: (res) => {
+          console.log(res);
+          if (res) {
+            // Remover o registro enviado do Local Storage
+            savedData.shift();
+            localStorage.setItem(this.localStorageKey, JSON.stringify(savedData));
+            // Enviar o próximo registro (se houver)
+            this.sendDataToSheet();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+    }
+  }
+
+  private clearLocalStorage() {
+    localStorage.removeItem(this.localStorageKey);
   }
 
   locais: string[] = [

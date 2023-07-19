@@ -1,38 +1,45 @@
   <div class="container-fluid">
-    <img class="img-fluid" src="https://static.wixstatic.com/media/fee8a3_0e2e0c8c187d4b3594cd7507ebb82660~mv2.png/v1/fill/w_1297,h_554,al_c,q_90,usm_0.66_1.00_0.01,enc_auto/fee8a3_0e2e0c8c187d4b3594cd7507ebb82660~mv2.png">
+    <img class="img-fluid" src="">
   </div>
 
-  <div class="container mt-5">
+  <div class="container  mt-5 pt-3 pb-3">
     <form [formGroup]="googleSheetForm" (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label for="name" class="form-label">Nome</label>
-        <input type="text" class="form-control" id="name" placeholder="name" formControlName="name">
+
+      <div class="row justify-content-center">
+
+        <div class="col-md-5 mb-4">
+          <label for="name" class="form-label small" style="color: white;">Nome</label>
+          <input type="text" class="form-control" id="name" formControlName="name" required>
+        </div>
+    
+        <div class="col-md-5 mb-4">
+          <label for="sobrenome" class="form-label small" style="color: white;">Sobrenome</label>
+          <input type="text" class="form-control" id="sobrenome" formControlName="sobrenome" required>
+        </div>
+    
+        <div class="col-md-5 mb-4">
+          <label for="datanasci" class="form-label small" style="color: white;">Data de Nascimento</label>
+          <input type="text" class="form-control" id="datanasci" formControlName="datanasci"
+            bsDatepicker required>
+        </div>
+    
+        <div class="col-md-5 mb-4">
+          <label for="telefone" class="form-label small" style="color: white;">Telefone</label>
+          <input type="text" class="form-control" id="telefone" formControlName="telefone" required>
+        </div>
+    
+        <div class="col-md-5 mb-4">
+          <label for="local" class="form-label small" style="color: white;">Local</label>
+          <select class="form-select" id="local" formControlName="local">
+            <option *ngFor="let local of locais" [value]="local">{{ local }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-10 text-center"> <!-- Coluna para o botão, adicionando a classe "text-center" para centralizá-lo -->
+          <button class="btn btn-secondary mt-3" style="width: 200px;">OK</button>
+        </div>
+
       </div>
-  
-      <div class="mb-3">
-        <label for="sobrenome" class="form-label">Sobrenome</label>
-        <input type="text" class="form-control" id="sobrenome" placeholder="sobrenome" formControlName="sobrenome">
-      </div>
-  
-      <div class="mb-3">
-        <label for="datanasci" class="form-label">Data de Nascimento</label>
-        <input type="text" class="form-control" id="datanasci" placeholder="datanasci" formControlName="datanasci"
-          bsDatepicker>
-      </div>
-  
-      <div class="mb-3">
-        <label for="telefone" class="form-label">Telefone</label>
-        <input type="text" class="form-control" id="telefone" placeholder="telefone" formControlName="telefone">
-      </div>
-  
-      <div class="mb-3">
-        <label for="local" class="form-label">Local</label>
-        <select class="form-select" id="local" formControlName="local">
-          <option *ngFor="let local of locais" [value]="local">{{ local }}</option>
-        </select>
-      </div>
-  
-      <button class="btn btn-success mt-3">OK</button>
   
     </form>
   </div>
