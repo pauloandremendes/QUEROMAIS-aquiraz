@@ -66,6 +66,8 @@ export class CadastroComponent implements OnInit {
           if (res) {
             this.clearLocalStorage();
             this.clearFormFields();
+
+            this.dataSent = false;
           }
         },
         error: (error) => {
@@ -92,6 +94,8 @@ export class CadastroComponent implements OnInit {
       this.clearFormFields(); 
     }
   }
+
+  private dataSent = false;
 
   private sendDataToSheet() {
     // Verificar se existem dados armazenados no localStorage
@@ -121,6 +125,7 @@ export class CadastroComponent implements OnInit {
           console.log(error);
         },
       });
+      this.dataSent = true;
     }
   }
 
