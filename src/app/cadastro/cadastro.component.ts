@@ -38,18 +38,21 @@ export class CadastroComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Verificar se já existem registros no Local Storage
-    let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
+  // Verificar se já existem registros no Local Storage
+  let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
 
-    // Preencher os campos do formulário com o último registro armazenado
-    if (savedData.length > 0) {
-      const lastFormData = savedData[savedData.length - 1];
-      this.googleSheetForm.setValue(lastFormData);
-    }
+  // Filtrar os registros que ainda não foram enviados
+  const unsentData = savedData.filter((formData: any) => !formData.dataSent);
 
-    if (navigator.onLine) {
-      this.sendDataToSheet();
-    }
+  // Preencher os campos do formulário com o último registro armazenado
+  if (unsentData.length > 0) {
+    const lastFormData = unsentData[unsentData.length - 1];
+    this.googleSheetForm.setValue(lastFormData);
+  }
+
+  if (navigator.onLine) {
+    this.sendDataToSheet();
+  }
   }
 
   public onSubmit() {
@@ -58,15 +61,15 @@ export class CadastroComponent implements OnInit {
     const datanasci = this.googleSheetForm.value.datanasci;
     const telefone = this.googleSheetForm.value.telefone;
     const local = this.googleSheetForm.value.local;
-
-    if(navigator.onLine){
+  
+    if (navigator.onLine) {
       this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
         next: (res) => {
           console.log(res);
           if (res) {
             this.clearLocalStorage();
             this.clearFormFields();
-
+  
             this.dataSent = false;
           }
         },
@@ -81,16 +84,18 @@ export class CadastroComponent implements OnInit {
         datanasci,
         telefone,
         local,
+        dataSent: false, // Definir a propriedade dataSent para false antes de salvar no Local Storage
       };
       // Verificar se já existem registros no Local Storage
       let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
-
-      // Adicionar o novo registro ao array de objetos
-      savedData.push(formData);
-
+  
+      const newData = [...savedData];
+  
+      newData.push(formData);
+  
       // Armazenar os dados atualizados no Local Storage
-      localStorage.setItem(this.localStorageKey, JSON.stringify(savedData));
-
+      localStorage.setItem(this.localStorageKey, JSON.stringify(newData));
+  
       this.clearFormFields(); 
     }
   }
@@ -114,11 +119,13 @@ export class CadastroComponent implements OnInit {
         next: (res) => {
           console.log(res);
           if (res) {
-            // Remover o registro enviado do Local Storage
-            savedData.shift();
+            const index = savedData.indexOf(formData);
+            if (index > -1) {
+              savedData.splice(index, 1);
+            }
+
             localStorage.setItem(this.localStorageKey, JSON.stringify(savedData));
-            // Enviar o próximo registro (se houver)
-            this.sendDataToSheet();
+
           }
         },
         error: (error) => {
