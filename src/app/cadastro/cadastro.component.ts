@@ -82,7 +82,7 @@ export class CadastroComponent implements OnInit {
 
             setTimeout(() => {
               this.hideMessage();
-            }, 5000);
+            }, 3000);
           }
         },
         error: (error) => {
