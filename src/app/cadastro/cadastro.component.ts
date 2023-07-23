@@ -13,6 +13,8 @@ export class CadastroComponent implements OnInit {
   googleSheetForm!: FormGroup;
   private localStorageKey = 'form_data';
 
+  dataSaved: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private service: SheetService,
@@ -71,6 +73,12 @@ export class CadastroComponent implements OnInit {
             this.clearFormFields();
   
             this.dataSent = false;
+
+            this.dataSaved = true;
+
+            setTimeout(() => {
+              this.dataSaved = false;
+            }, 5000);
           }
         },
         error: (error) => {
@@ -147,6 +155,6 @@ export class CadastroComponent implements OnInit {
   locais: string[] = [
     'ÁGUA VERDE', 'ANTONIO DIOGO','AQUIRAZ','ANCURI','ARACOIABA','ARUARU','BARREIRA', 'BAÚ', 'BELA VISTA', 'BOM JARDIM', 'CANINDÉ',
     'CARMO','CASTELÃO', 'CAUCAIA', 'CIDADE DOS FUNCIONÁRIOS','CONJUNTO CEARÁ','CRISTO REDENTOR','COCÓ','ESTRADA DO FIO','EUSÉBIO','FÁTIMA', 'GENIBAÚ', 'HORIZONTE','IPARANA', 'JARDIM GUANABARA','MARACANAÚ','MARANGUAPE','MESSEJANA','MONDUBIM','PACAJUS','PARANGABA','PARQUELÂNDIA','PASSARÉ',
-    'PAZ','PECÉM', 'PEDRAS', 'PINDORETAMA','PRAIA DO FUTURO','QUINTINO CUNHA','REDENÇÃO','SÃO GONÇALO','SERRINHA', 'ELLERY' 
+    'PAZ','PECÉM', 'PEDRAS', 'PINDORETAMA','PRAIA DO FUTURO','QUINTINO CUNHA','REDENÇÃO','SÃO GONÇALO','SERRINHA', 'ELLERY', 'OUTROS' 
   ];
 }
