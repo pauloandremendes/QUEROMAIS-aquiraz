@@ -13,7 +13,11 @@ export class CadastroComponent implements OnInit {
   googleSheetForm!: FormGroup;
   private localStorageKey = 'form_data';
 
-  dataSaved: boolean = false;
+  showMessage: boolean = false;
+
+  hideMessage() {
+    this.showMessage = false;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -74,10 +78,10 @@ export class CadastroComponent implements OnInit {
   
             this.dataSent = false;
 
-            this.dataSaved = true;
+            this.showMessage = true;
 
             setTimeout(() => {
-              this.dataSaved = false;
+              this.hideMessage();
             }, 5000);
           }
         },
