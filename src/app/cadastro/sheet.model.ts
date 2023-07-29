@@ -1,7 +1,7 @@
 export interface Sheet {
-    name: string;
-    sobrenome: string;
-    datanasci: string;
+    nome: string;
+    data_nascimento: string;
+    endereco: string;
     telefone: string;
-    local: string;
+    email: string;
   }

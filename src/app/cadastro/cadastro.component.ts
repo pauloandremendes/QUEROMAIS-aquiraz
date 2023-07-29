@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Sheet } from 'src/app/cadastro/sheet.model';
 import { SheetService } from 'src/app/cadastro/sheet.service';
@@ -25,11 +25,11 @@ export class CadastroComponent implements OnInit {
     private router: Router
   ) {
     this.googleSheetForm = this.formBuilder.group({
-      name: formBuilder.control(localStorage.getItem(this.localStorageKey + '_name') || ''),
-      sobrenome: formBuilder.control(localStorage.getItem(this.localStorageKey + '_sobrenome') || ''),
-      datanasci: formBuilder.control(localStorage.getItem(this.localStorageKey + '_datanasci') || ''),
-      telefone: formBuilder.control(localStorage.getItem(this.localStorageKey + '_telefone') || ''),
-      local: formBuilder.control(localStorage.getItem(this.localStorageKey + '_local') || ''),
+      nome: [localStorage.getItem(this.localStorageKey + '_nome') || '', Validators.required],
+      data_nascimento: [localStorage.getItem(this.localStorageKey + '_data_nascimento') || '', Validators.required],
+      endereco: [localStorage.getItem(this.localStorageKey + '_endereco') || '', Validators.required],
+      telefone: [localStorage.getItem(this.localStorageKey + '_telefone') || '', Validators.required],
+      email: [localStorage.getItem(this.localStorageKey + '_email') || '', [Validators.required, Validators.email]],
     });
 
     window.addEventListener('online', () => {
@@ -44,6 +44,7 @@ export class CadastroComponent implements OnInit {
   }
 
   ngOnInit() {
+  console.log(this.googleSheetForm);
   // Verificar se já existem registros no Local Storage
   let savedData = JSON.parse(localStorage.getItem(this.localStorageKey) || '[]');
 
@@ -61,15 +62,32 @@ export class CadastroComponent implements OnInit {
   }
   }
 
+  private markAllFieldsAsTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      if (control instanceof FormGroup) {
+        this.markAllFieldsAsTouched(control);
+      } else {
+        control.markAsTouched();
+      }
+    });
+  }
+
   public onSubmit() {
-    const name = this.googleSheetForm.value.name;
-    const sobrenome = this.googleSheetForm.value.sobrenome;
-    const datanasci = this.googleSheetForm.value.datanasci;
+
+    if (this.googleSheetForm.invalid) {
+      this.markAllFieldsAsTouched(this.googleSheetForm); // Marca os campos inválidos como "touched" para mostrar as mensagens de erro
+      return;
+    }
+
+    const nome = this.googleSheetForm.value.nome;    
+    const data_nascimento = this.googleSheetForm.value.data_nascimento;
+    const endereco = this.googleSheetForm.value.endereco;
     const telefone = this.googleSheetForm.value.telefone;
-    const local = this.googleSheetForm.value.local;
+    const email = this.googleSheetForm.value.email;
+    
   
     if (navigator.onLine) {
-      this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
+      this.service.createSheet(nome, data_nascimento, endereco, telefone, email).subscribe({
         next: (res) => {
           console.log(res);
           if (res) {
@@ -91,11 +109,11 @@ export class CadastroComponent implements OnInit {
       });
     } else {
       const formData = {
-        name,
-        sobrenome,
-        datanasci,
+        nome,
+        email,
+        data_nascimento,
         telefone,
-        local,
+        endereco,
         dataSent: false, // Definir a propriedade dataSent para false antes de salvar no Local Storage
       };
       // Verificar se já existem registros no Local Storage
@@ -120,14 +138,14 @@ export class CadastroComponent implements OnInit {
 
     if (savedData.length > 0) {
       const formData = savedData[0];
-      const name = formData.name;
-      const sobrenome = formData.sobrenome;
-      const datanasci = formData.datanasci;
+      const nome = formData.nome;      
+      const data_nascimento = formData.data_nascimento;
+      const endereco = formData.endereco;
       const telefone = formData.telefone;
-      const local = formData.local;
+      const email = formData.email;
 
       // Enviar os dados para a planilha
-      this.service.createSheet(name, sobrenome, datanasci, telefone, local).subscribe({
+      this.service.createSheet(nome, data_nascimento, endereco, telefone, email).subscribe({
         next: (res) => {
           console.log(res);
           if (res) {
@@ -155,10 +173,4 @@ export class CadastroComponent implements OnInit {
   private clearFormFields() {
     this.googleSheetForm.reset();
   }
-
-  locais: string[] = [
-    'ÁGUA VERDE', 'ANTONIO DIOGO','AQUIRAZ','ANCURI','ARACOIABA','ARUARU','BARREIRA', 'BAÚ', 'BELA VISTA', 'BOM JARDIM', 'CANINDÉ',
-    'CARMO','CASTELÃO', 'CAUCAIA', 'CIDADE DOS FUNCIONÁRIOS','CONJUNTO CEARÁ','CRISTO REDENTOR','COCÓ','ESTRADA DO FIO','EUSÉBIO','FÁTIMA', 'GENIBAÚ', 'HORIZONTE','IPARANA', 'JARDIM GUANABARA','MARACANAÚ','MARANGUAPE','MESSEJANA','MONDUBIM','PACAJUS','PARANGABA','PARQUELÂNDIA','PASSARÉ',
-    'ALDEOTA','PECÉM', 'PEDRAS', 'PINDORETAMA','PRAIA DO FUTURO','QUINTINO CUNHA','REDENÇÃO','SÃO GONÇALO','SERRINHA', 'ELLERY', 'OUTROS' 
-  ];
 }

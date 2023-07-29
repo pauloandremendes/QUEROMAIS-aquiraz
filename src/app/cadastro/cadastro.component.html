@@ -15,36 +15,50 @@
       <div class="row justify-content-center">
 
         <div class="col-md-10 text-center">
-          <h2 style="color: rgb(41, 41, 39);"  class="custom-title-2">VENHA PARTICIPAR DESSE ENCONTRO</h2>
+          <h2 style="color: rgb(41, 41, 39);"  class="custom-title-2">Cadastro de Participantes - Aquiraz</h2>
         </div>
 
         <div class="col-md-5 mb-4">
-          <label for="name" class="form-label small" style="color: rgb(41, 41, 39);">Nome</label>
-          <input type="text" class="form-control" id="name" formControlName="name" required>
+          <label for="nome" class="form-label small" style="color: rgb(41, 41, 39);">Nome</label>
+          <input type="text" class="form-control" id="nome" formControlName="nome">
+          <div *ngIf="googleSheetForm.get('nome')!.invalid && googleSheetForm.get('nome')!.touched" class="text-danger">
+            <div *ngIf="googleSheetForm.get('nome')!.hasError('required')">Nome é obrigatório.</div>
+          </div>
         </div>
-    
+       
         <div class="col-md-5 mb-4">
-          <label for="sobrenome" class="form-label small" style="color: rgb(41, 41, 39);">Sobrenome</label>
-          <input type="text" class="form-control" id="sobrenome" formControlName="sobrenome" required>
+          <label for="data_nascimento" class="form-label small" style="color: rgb(41, 41, 39);">Data de Nascimento</label>
+          <input type="date" class="form-control" id="data_nascimento" formControlName="data_nascimento"
+            bsDatepicker>
+            <div *ngIf="googleSheetForm.get('data_nascimento')!.invalid && googleSheetForm.get('data_nascimento')!.touched" class="text-danger">
+              <div *ngIf="googleSheetForm.get('data_nascimento')!.hasError('required')">Data de Nascimento é obrigatória.</div>
+            </div>
         </div>
-    
+            
         <div class="col-md-5 mb-4">
-          <label for="datanasci" class="form-label small" style="color: rgb(41, 41, 39);">Data de Nascimento</label>
-          <input type="text" class="form-control" id="datanasci" formControlName="datanasci"
-            bsDatepicker required>
+          <label for="endereco" class="form-label small" style="color: rgb(41, 41, 39);">Endereço</label>
+          <input type="text" class="form-control" id="endereco" formControlName="endereco">
+          <div *ngIf="googleSheetForm.get('endereco')!.invalid && googleSheetForm.get('endereco')!.touched" class="text-danger">
+            <div *ngIf="googleSheetForm.get('endereco')!.hasError('required')">Endereço é obrigatório.</div>
+          </div>
         </div>
     
         <div class="col-md-5 mb-4">
           <label for="telefone" class="form-label small" style="color: rgb(41, 41, 39);">Telefone</label>
-          <input type="text" class="form-control" id="telefone" formControlName="telefone" required>
+          <input type="text" class="form-control" id="telefone" formControlName="telefone">
+          <div *ngIf="googleSheetForm.get('telefone')!.invalid && googleSheetForm.get('telefone')!.touched" class="text-danger">
+            <div *ngIf="googleSheetForm.get('telefone')!.hasError('required')">Telefone é obrigatório.</div>
+          </div>
         </div>
-    
+
         <div class="col-md-5 mb-4">
-          <label for="local" class="form-label small" style="color: rgb(41, 41, 39);">Local</label>
-          <select class="form-select" id="local" formControlName="local">
-            <option *ngFor="let local of locais" [value]="local">{{ local }}</option>
-          </select>
-        </div>
+          <label for="email" class="form-label small" style="color: rgb(41, 41, 39);">E-mail</label>
+          <input type="email" class="form-control" id="email" formControlName="email">
+          <div *ngIf="googleSheetForm.get('email')!.invalid && googleSheetForm.get('email')!.touched" class="text-danger">
+            <div *ngIf="googleSheetForm.get('email')!.hasError('required')">E-mail é obrigatório.</div>
+            <div *ngIf="googleSheetForm.get('email')!.hasError('email')">Formato de e-mail inválido.</div>
+          </div>
+        </div>   
 
         <div class="alert alert-success mt-3 position-fixed top-0 start-50 translate-middle-x" style="z-index: 9999;" *ngIf="showMessage">
           Dados salvos!

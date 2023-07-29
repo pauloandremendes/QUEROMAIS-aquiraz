@@ -11,18 +11,18 @@ export class SheetService {
   constructor(private http: HttpClient) {}
 
   createSheet(
-    name: string,
-    sobrenome: string,
-    datanasci: string,
+    nome: string,
+    data_nascimento: string,
+    endereco: string,
     telefone: string,
-    local: string
+    email: string
   ): Observable<Sheet> {
     return this.http.post<Sheet>(`${environment.CONNECTION_URL}`, {
-        name,
-        sobrenome,
-        datanasci,
-        telefone,
-        local,
+      nome,
+      data_nascimento,
+      endereco,
+      telefone,
+      email,
     });
   }
 

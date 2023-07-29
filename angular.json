@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "QUEROMAIS-Halleluya": {
+    "QUEROMAIS-aquiraz": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -63,10 +63,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "QUEROMAIS-Halleluya:build:production"
+              "browserTarget": "QUEROMAIS-aquiraz:build:production"
             },
             "development": {
-              "browserTarget": "QUEROMAIS-Halleluya:build:development"
+              "browserTarget": "QUEROMAIS-aquiraz:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -74,7 +74,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "QUEROMAIS-Halleluya:build"
+            "browserTarget": "QUEROMAIS-aquiraz:build"
           }
         },
         "test": {
