@@ -12,6 +12,15 @@ import { SheetService } from 'src/app/cadastro/sheet.service';
 export class CadastroComponent implements OnInit {
   googleSheetForm!: FormGroup;
   private localStorageKey = 'form_data';
+  municipios: string[] = [
+    "AQUIRAZ", "ANCURÍ", "ARACOIABA", "ARUARU", "BARREIRA", "BAÚ", "BELA VISTA",
+    "BOM JARDIM", "CANINDÉ", "CARMO", "CASTELÃO", "CAUCAIA", "CIDADE DOS FUNCIONÁRIOS",
+    "CONJUNTO CEARÁ", "CRISTO REDENTOR", "COCÓ", "ESTRADA DO FIO", "EUSÉBIO", "FÁTIMA",
+    "GENIBAÚ", "HORIZONTE", "IPARANA", "JARDIM GUANABARA", "MARACANAÚ", "MARANGUAPE",
+    "MESSEJANA", "MONDUBIM", "PACAJUS", "PARANGABA", "PARQUELÂNDIA", "PASSARÉ", "ALDEOTA",
+    "PECÉM", "PEDRAS", "PINDORETAMA", "PRAIA DO FUTURO", "QUINTINO CUNHA", "REDENÇÃO",
+    "SÃO GONÇALO", "SERRINHA", "OUTROS"
+  ];
 
   showMessage: boolean = false;
 
@@ -26,10 +35,10 @@ export class CadastroComponent implements OnInit {
   ) {
     this.googleSheetForm = this.formBuilder.group({
       nome: [localStorage.getItem(this.localStorageKey + '_nome') || '', Validators.required],
-      data_nascimento: [localStorage.getItem(this.localStorageKey + '_data_nascimento') || '', Validators.required],
-      endereco: [localStorage.getItem(this.localStorageKey + '_endereco') || '', Validators.required],
+      sobrenome: [localStorage.getItem(this.localStorageKey + '_sobrenome') || '', Validators.required],
+      datanascimento: [localStorage.getItem(this.localStorageKey + '_datanascimento') || '', Validators.required],
       telefone: [localStorage.getItem(this.localStorageKey + '_telefone') || '', Validators.required],
-      email: [localStorage.getItem(this.localStorageKey + '_email') || '', [Validators.required, Validators.email]],
+      local: [localStorage.getItem(this.localStorageKey + '_local') || '', [Validators.required]],
     });
 
     window.addEventListener('online', () => {
@@ -80,14 +89,14 @@ export class CadastroComponent implements OnInit {
     }
 
     const nome = this.googleSheetForm.value.nome;    
-    const data_nascimento = this.googleSheetForm.value.data_nascimento;
-    const endereco = this.googleSheetForm.value.endereco;
+    const sobrenome = this.googleSheetForm.value.sobrenome;
+    const datanascimento = this.googleSheetForm.value.datanascimento;
     const telefone = this.googleSheetForm.value.telefone;
-    const email = this.googleSheetForm.value.email;
+    const local = this.googleSheetForm.value.local;
     
   
     if (navigator.onLine) {
-      this.service.createSheet(nome, data_nascimento, endereco, telefone, email).subscribe({
+      this.service.createSheet(nome, sobrenome, datanascimento, telefone, local).subscribe({
         next: (res) => {
           console.log(res);
           if (res) {
@@ -110,10 +119,10 @@ export class CadastroComponent implements OnInit {
     } else {
       const formData = {
         nome,
-        email,
-        data_nascimento,
+        sobrenome,
+        datanascimento,
         telefone,
-        endereco,
+        local,
         dataSent: false, // Definir a propriedade dataSent para false antes de salvar no Local Storage
       };
       // Verificar se já existem registros no Local Storage
@@ -139,13 +148,13 @@ export class CadastroComponent implements OnInit {
     if (savedData.length > 0) {
       const formData = savedData[0];
       const nome = formData.nome;      
-      const data_nascimento = formData.data_nascimento;
-      const endereco = formData.endereco;
+      const sobrenome = formData.sobrenome;
+      const datanascimento = formData.datanascimento;
       const telefone = formData.telefone;
-      const email = formData.email;
+      const local = formData.local;
 
       // Enviar os dados para a planilha
-      this.service.createSheet(nome, data_nascimento, endereco, telefone, email).subscribe({
+      this.service.createSheet(nome, sobrenome, datanascimento, telefone, local).subscribe({
         next: (res) => {
           console.log(res);
           if (res) {
@@ -172,5 +181,14 @@ export class CadastroComponent implements OnInit {
 
   private clearFormFields() {
     this.googleSheetForm.reset();
+  }
+
+  formatarTelefone(event: any): void {
+    const input = event.target as HTMLInputElement;
+    let valor = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+    if (valor.length > 0) {
+      valor = '(' + valor.substring(0, 2) + ') ' + valor.substring(2, 6) + '-' + valor.substring(6, 10);
+    }
+    input.value = valor;
   }
 }

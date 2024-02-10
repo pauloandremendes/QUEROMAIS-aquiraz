@@ -12,17 +12,17 @@ export class SheetService {
 
   createSheet(
     nome: string,
-    data_nascimento: string,
-    endereco: string,
+    sobrenome: string,
+    datanascimento: string,
     telefone: string,
-    email: string
+    local: string
   ): Observable<Sheet> {
     return this.http.post<Sheet>(`${environment.CONNECTION_URL}`, {
       nome,
-      data_nascimento,
-      endereco,
+      sobrenome,
+      datanascimento,
       telefone,
-      email,
+      local,
     });
   }
 
