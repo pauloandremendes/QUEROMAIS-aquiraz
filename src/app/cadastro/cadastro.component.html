@@ -55,13 +55,13 @@
         </div>        
             
         <div class="col-md-5 mb-4">
-          <label for="local" class="form-label small" style="color: rgb(241, 241, 241);">Local</label>
+          <label for="local" class="form-label small" style="color: rgb(241, 241, 241);">Centro de Evangelização</label>
           <select class="form-select" id="local" formControlName="local">
-            <option value="" disabled selected>Selecione o município</option>
+            <option value="" disabled selected>Selecione o CEV</option>
             <option *ngFor="let municipio of municipios" [value]="municipio">{{ municipio }}</option>
           </select>
           <div *ngIf="googleSheetForm.get('local')!.invalid && googleSheetForm.get('local')!.touched" class="text-danger">
-            <div *ngIf="googleSheetForm.get('local')!.hasError('required')">Local é obrigatório.</div>
+            <div *ngIf="googleSheetForm.get('local')!.hasError('required')">CEV é obrigatório.</div>
           </div>
         </div>
 
