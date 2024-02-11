@@ -186,9 +186,16 @@ export class CadastroComponent implements OnInit {
   formatarTelefone(event: any): void {
     const input = event.target as HTMLInputElement;
     let valor = input.value.replace(/\D/g, ''); // Remove caracteres não numéricos
-    if (valor.length > 0) {
+  
+    // Verifica se o número tem 11 dígitos (incluindo o DDD)
+    if (valor.length === 11) {
+      valor = '(' + valor.substring(0, 2) + ') ' + valor.substring(2, 7) + '-' + valor.substring(7, 11);
+    } 
+    // Verifica se o número tem 10 dígitos (sem o DDD)
+    else if (valor.length === 10) {
       valor = '(' + valor.substring(0, 2) + ') ' + valor.substring(2, 6) + '-' + valor.substring(6, 10);
     }
+  
     input.value = valor;
   }
 }
